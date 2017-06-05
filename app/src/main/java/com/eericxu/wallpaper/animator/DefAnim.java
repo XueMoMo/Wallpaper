@@ -6,7 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Build;
 import android.view.SurfaceHolder;
-import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AnticipateOvershootInterpolator;
 
 import com.eericxu.wallpaper.service.Wallpaper;
 import com.eericxu.wallpaper.service.WallpaperServer;
@@ -33,7 +33,7 @@ public class DefAnim implements Wallpaper {
         valueAnimator = new ValueAnimator().setDuration(600);
         int[] values = {1, 300};
         valueAnimator.setIntValues(values);
-        valueAnimator.setInterpolator(new AccelerateInterpolator());
+        valueAnimator.setInterpolator(new AnticipateOvershootInterpolator());
         valueAnimator.setRepeatCount(ValueAnimator.INFINITE);
         valueAnimator.setRepeatMode(ValueAnimator.REVERSE);
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
