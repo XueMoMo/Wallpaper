@@ -1,16 +1,14 @@
 package com.eericxu.wallpaper.service;
 
-import android.animation.ValueAnimator;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.os.Build;
+import android.content.Intent;
 import android.service.wallpaper.WallpaperService;
 import android.view.SurfaceHolder;
-import android.view.animation.AccelerateInterpolator;
+
+import com.eericxu.wallpaper.animator.DefAnim;
 
 public class WallpaperServer extends WallpaperService {
     public WallpaperServer() {
+
     }
 
     @Override
@@ -18,43 +16,28 @@ public class WallpaperServer extends WallpaperService {
         return new MEngine();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 
-    private class MEngine extends Engine {
-        private Canvas canvas;
-        private ValueAnimator valueAnimator;
-        private Paint paint;
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
+        return START_STICKY;
+    }
+
+    public class MEngine extends Engine {
+
         private int desiredWidth;
         private int desiredHeight;
+        private Wallpaper wallpaper;
 
         @Override
         public void onCreate(final SurfaceHolder surfaceHolder) {
             super.onCreate(surfaceHolder);
-            canvas = surfaceHolder.lockCanvas();
-            paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            paint.setColor(Color.BLUE);
-            valueAnimator = new ValueAnimator().setDuration(600);
-            int[] values = {1, 300};
-            valueAnimator.setIntValues(values);
-            valueAnimator.setInterpolator(new AccelerateInterpolator());
-            valueAnimator.setRepeatCount(ValueAnimator.INFINITE);
-            valueAnimator.setRepeatMode(ValueAnimator.REVERSE);
-            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    int value = (int) animation.getAnimatedValue();
-                    SurfaceHolder holder = getSurfaceHolder();
-                    canvas = holder.lockCanvas();
-                    if (canvas != null) {
-//                        Log.i("wallpaper:","h:"+desiredHeight+"     w:"+desiredWidth);
-                        canvas.drawColor(Color.GRAY);
-                        canvas.drawCircle(desiredWidth / 2, desiredHeight / 2 + value, 50, paint);
-//                        canvas.draw
-//                        canvas.save();
-                    }
-                    if (canvas != null)
-                        holder.unlockCanvasAndPost(canvas);
-                }
-            });
+            wallpaper = createWallpaper();
+            wallpaper.onCreate(this);
         }
 
         @Override
@@ -71,6 +54,13 @@ public class WallpaperServer extends WallpaperService {
             desiredHeight = height;
         }
 
+        public int getDesiredHeight() {
+            return desiredHeight;
+        }
+
+        public int getDesiredWidth() {
+            return desiredWidth;
+        }
 
         @Override
         public void onSurfaceRedrawNeeded(SurfaceHolder holder) {
@@ -80,21 +70,16 @@ public class WallpaperServer extends WallpaperService {
         @Override
         public void onVisibilityChanged(boolean visible) {
             super.onVisibilityChanged(visible);
-            if (visible) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    if (valueAnimator.isPaused()) {
-                        valueAnimator.resume();
-                    } else if (!valueAnimator.isRunning()) {
-                        valueAnimator.start();
-                    }
-
-                }
-            } else {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    if (valueAnimator.isRunning())
-                        valueAnimator.pause();
-                }
-            }
+            wallpaper.onVisibility(visible);
         }
+
+        @Override
+        public void onDestroy() {
+            wallpaper.destroy();
+        }
+    }
+
+    private Wallpaper createWallpaper() {
+        return new DefAnim();
     }
 }
