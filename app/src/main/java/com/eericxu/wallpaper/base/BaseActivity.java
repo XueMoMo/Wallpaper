@@ -17,4 +17,8 @@ public class BaseActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         PermissionUtils.onRequestPermissionResult(this,requestCode,permissions,grantResults);
     }
+
+    public  <T> T findView(int id){
+        return (T)findViewById(id);
+    }
 }

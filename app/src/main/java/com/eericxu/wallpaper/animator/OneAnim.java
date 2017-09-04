@@ -5,48 +5,56 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Build;
+import android.util.SparseArray;
 import android.view.SurfaceHolder;
-import android.view.animation.AnticipateOvershootInterpolator;
+import android.view.animation.AccelerateDecelerateInterpolator;
 
 import com.eericxu.wallpaper.service.Wallpaper;
 import com.eericxu.wallpaper.service.WallpaperServer;
+import com.eericxu.wallpaper.utils.MathT;
 
 /**
- * Created by Eericxu on 2017-06-05.
+ * Created by Eericxu on 2017-08-04.
  */
 
-public class DefAnim implements Wallpaper {
+public class OneAnim implements Wallpaper {
+
 	private Canvas canvas;
 	private ValueAnimator valueAnimator;
 	private Paint paint;
+	private SparseArray<Line> lines = new SparseArray<>();
 	private WallpaperServer.MEngine engine;
 
-	public DefAnim() {
-	}
-
 	@Override
-	public void onCreate(WallpaperServer.MEngine e) {
-		this.engine = e;
+	public void onCreate(final WallpaperServer.MEngine engine) {
+		this.engine = engine;
 		paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		paint.setColor(Color.BLUE);
-		valueAnimator = new ValueAnimator().setDuration(600);
-		int[] values = {1, 300};
+		paint.setStrokeWidth(5);
+		initLines();
+		valueAnimator = new ValueAnimator().setDuration(1500);
+		int[] values = {0, 360};
 		valueAnimator.setIntValues(values);
-		valueAnimator.setInterpolator(new AnticipateOvershootInterpolator());
+		valueAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
 		valueAnimator.setRepeatCount(ValueAnimator.INFINITE);
-		valueAnimator.setRepeatMode(ValueAnimator.REVERSE);
+		valueAnimator.setRepeatMode(ValueAnimator.RESTART);
 		valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 			@Override
 			public void onAnimationUpdate(ValueAnimator animation) {
 				int value = (int) animation.getAnimatedValue();
+				double sin = MathT.sin(value);
+				double cos = MathT.cos(value);
 				SurfaceHolder holder = engine.getSurfaceHolder();
 				canvas = holder.lockCanvas();
 				if (canvas != null) {
 //                        Log.i("wallpaper:","h:"+desiredHeight+"     w:"+desiredWidth);
 					canvas.drawColor(Color.GRAY);
-					canvas.drawCircle(engine.getDesiredWidth() / 2, engine.getDesiredHeight() / 2 + value, 50, paint);
-//                        canvas.draw
-//                        canvas.save();
+					int r = 100;
+					int x = engine.getDesiredWidth() / 2;
+					int y = engine.getDesiredHeight() / 2;
+					int yOff = (int) (r * sin);
+					int xOff = (int) (r * cos);
+					canvas.drawLine(x - xOff, y - yOff, x + xOff, y + yOff, paint);
 				}
 				if (canvas != null) {
 					holder.unlockCanvasAndPost(canvas);
@@ -56,11 +64,23 @@ public class DefAnim implements Wallpaper {
 		});
 	}
 
+	private void initLines() {
+		for (int i = 0; i < 1; i++) {
+			Line line = new Line();
+			line.x1 = 100;
+			line.y1 = 1000;
+			line.x2 = 1000;
+			line.y2 = 1000;
+			lines.put(i, line);
+		}
+	}
+
 	@Override
 	public void destroy() {
 		valueAnimator.end();
-		if (engine != null && canvas != null) {
+		if (canvas != null && engine != null) {
 			engine.getSurfaceHolder().unlockCanvasAndPost(canvas);
+			canvas = null;
 		}
 	}
 
@@ -81,8 +101,12 @@ public class DefAnim implements Wallpaper {
 				}
 			}
 		}
-
 	}
 
-
+	private class Line {
+		public int x1;
+		public int y1;
+		public int x2;
+		public int y2;
+	}
 }
