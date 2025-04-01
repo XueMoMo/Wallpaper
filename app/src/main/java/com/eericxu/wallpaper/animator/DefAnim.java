@@ -44,7 +44,7 @@ public class DefAnim implements Wallpaper {
 				if (canvas != null) {
 //                        Log.i("wallpaper:","h:"+desiredHeight+"     w:"+desiredWidth);
 					canvas.drawColor(Color.GRAY);
-					canvas.drawCircle(engine.getDesiredWidth() / 2, engine.getDesiredHeight() / 2 + value, 50, paint);
+					canvas.drawCircle(engine.getDesiredWidth() / 2.0f, engine.getDesiredHeight() / 2.0f + value, 50, paint);
 //                        canvas.draw
 //                        canvas.save();
 				}

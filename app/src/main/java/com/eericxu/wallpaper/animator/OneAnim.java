@@ -38,30 +38,25 @@ public class OneAnim implements Wallpaper {
 		valueAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
 		valueAnimator.setRepeatCount(ValueAnimator.INFINITE);
 		valueAnimator.setRepeatMode(ValueAnimator.RESTART);
-		valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-			@Override
-			public void onAnimationUpdate(ValueAnimator animation) {
-				int value = (int) animation.getAnimatedValue();
-				double sin = MathT.sin(value);
-				double cos = MathT.cos(value);
-				SurfaceHolder holder = engine.getSurfaceHolder();
-				canvas = holder.lockCanvas();
-				if (canvas != null) {
-//                        Log.i("wallpaper:","h:"+desiredHeight+"     w:"+desiredWidth);
-					canvas.drawColor(Color.GRAY);
-					int r = 100;
-					int x = engine.getDesiredWidth() / 2;
-					int y = engine.getDesiredHeight() / 2;
-					int yOff = (int) (r * sin);
-					int xOff = (int) (r * cos);
-					canvas.drawLine(x - xOff, y - yOff, x + xOff, y + yOff, paint);
-				}
-				if (canvas != null) {
-					holder.unlockCanvasAndPost(canvas);
-					canvas = null;
-				}
-			}
-		});
+		valueAnimator.addUpdateListener(animation -> {
+            int value = (int) animation.getAnimatedValue();
+            double sin = MathT.sin(value);
+            double cos = MathT.cos(value);
+            canvas = engine.getSurfaceHolder().lockCanvas();
+            if (canvas != null) {
+                canvas.drawColor(Color.GRAY);
+                int r = 100;
+                int x = engine.getDesiredWidth() / 2;
+                int y = engine.getDesiredHeight() / 2;
+                int yOff = (int) (r * sin);
+                int xOff = (int) (r * cos);
+                canvas.drawLine(x - xOff, y - yOff, x + xOff, y + yOff, paint);
+            }
+            if (canvas != null) {
+                engine.getSurfaceHolder().unlockCanvasAndPost(canvas);
+                canvas = null;
+            }
+        });
 	}
 
 	private void initLines() {

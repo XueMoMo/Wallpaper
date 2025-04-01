@@ -1,6 +1,5 @@
 package com.eericxu.wallpaper.service;
 
-import android.app.WallpaperManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +10,7 @@ import android.view.SurfaceHolder;
 import com.eericxu.wallpaper.animator.DefAnim;
 import com.eericxu.wallpaper.animator.OneAnim;
 import com.eericxu.wallpaper.utils.Config;
+import com.eericxu.wallpaper.web.DefWeb;
 
 public class WallpaperServer extends WallpaperService {
 	private MEngine mEngine;
@@ -68,14 +68,12 @@ public class WallpaperServer extends WallpaperService {
 			if (wallpaper != null)
 				wallpaper.destroy();
 			wallpaper = createWallpaper();
-			wallpaper.onCreate(this);
 		}
 
 		@Override
 		public void onCreate(final SurfaceHolder surfaceHolder) {
 			super.onCreate(surfaceHolder);
 			wallpaper = createWallpaper();
-			wallpaper.onCreate(this);
 		}
 
 		@Override
@@ -125,11 +123,16 @@ public class WallpaperServer extends WallpaperService {
 				w = new DefAnim();
 				break;
 			case "web":
-				w = new OneAnim();
+				w = new DefWeb();
 				break;
+            case "one":
+                w = new OneAnim();
 		}
-		if (w == null)
+		if (w == null){
 			w = new DefAnim();
+        }
+        w.onCreate(mEngine);
+        w.onVisibility(true);
 		return w;
 	}
 
