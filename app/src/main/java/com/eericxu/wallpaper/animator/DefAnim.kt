@@ -13,7 +13,6 @@ import com.eericxu.wallpaper.service.WallpaperServer.MEngine
  * Created by Eericxu on 2017-06-05.
  */
 class DefAnim : Wallpaper {
-    private var canvas: Canvas? = null
     private lateinit var valueAnimator: ValueAnimator
     private lateinit var paint: Paint
     private lateinit var engine: MEngine
@@ -31,10 +30,10 @@ class DefAnim : Wallpaper {
         valueAnimator.addUpdateListener { animation ->
             val value = animation.animatedValue as Int
             val holder = engine.surfaceHolder
-            canvas = holder.lockCanvas()
+            val canvas = holder.lockCanvas()
             if (canvas != null) {
-                canvas!!.drawColor(Color.GRAY)
-                canvas!!.drawCircle(
+                canvas.drawColor(Color.BLACK)
+                canvas.drawCircle(
                     engine.desiredWidth / 2.0f,
                     engine.desiredHeight / 2.0f + value,
                     50f,

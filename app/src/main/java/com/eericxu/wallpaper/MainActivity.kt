@@ -10,18 +10,18 @@ import android.widget.AdapterView
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.Spinner
 import com.eericxu.wallpaper.base.BaseActivity
 import com.eericxu.wallpaper.service.WallpaperServer
 import com.eericxu.wallpaper.utils.Config
 import com.eericxu.wallpaper.utils.PermissionUtils
 import java.io.File
-import java.net.URI
 
 class MainActivity : BaseActivity(), OnItemClickListener, OnItemSelectedListener {
     private var spinner: Spinner? = null
     private var arrayAdapter: ArrayAdapter<String>? = null
-    private val names = arrayOf("anim", "web", "one")
+    private val names = arrayOf("anim", "web", "one", "video")
 
     private fun copyFile() {
         val extDir = getExternalFilesDir("")
@@ -60,12 +60,26 @@ class MainActivity : BaseActivity(), OnItemClickListener, OnItemSelectedListener
         arrayAdapter = ArrayAdapter(this, R.layout.item_tv, R.id.tv_name, names)
         spinner!!.adapter = arrayAdapter
         spinner!!.onItemSelectedListener = this
+        val btnSet = findView<Button>(R.id.btn_set)
+        btnSet.setOnClickListener { setWallpaper() }
     }
 
     private fun onChange(position: Int) {
         if (position < 0) return
         Config.saveWallpaper(this, names[position])
-        sendBroadcast(Intent(WallpaperServer.Companion.action_receiver))
+    }
+
+    override fun onItemClick(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
+    }
+
+    override fun onItemSelected(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
+        onChange(position)
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+    }
+
+    fun setWallpaper(){
         val instance = WallpaperManager.getInstance(this)
         val wallpaperInfo = instance.wallpaperInfo
         if (wallpaperInfo == null || wallpaperInfo.serviceInfo.packageName != packageName) {
@@ -83,16 +97,7 @@ class MainActivity : BaseActivity(), OnItemClickListener, OnItemSelectedListener
                 Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
             )
             startActivity(mHomeIntent)
+            sendBroadcast(Intent(WallpaperServer.ACTION_RECEIVER))
         }
-    }
-
-    override fun onItemClick(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
-    }
-
-    override fun onItemSelected(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
-        onChange(position)
-    }
-
-    override fun onNothingSelected(parent: AdapterView<*>?) {
     }
 }

@@ -15,7 +15,6 @@ import com.eericxu.wallpaper.utils.MathT
  * Created by Eericxu on 2017-08-04.
  */
 class OneAnim : Wallpaper {
-    private var canvas: Canvas? = null
     private lateinit var valueAnimator: ValueAnimator
     private var paint: Paint? = null
     private val lines = SparseArray<Line>()
@@ -37,15 +36,15 @@ class OneAnim : Wallpaper {
             val value = animation.animatedValue as Int
             val sin = MathT.sin(value)
             val cos = MathT.cos(value)
-            canvas = engine.surfaceHolder.lockCanvas()
+            val canvas = engine.surfaceHolder.lockCanvas()
             if (canvas != null) {
-                canvas!!.drawColor(Color.GRAY)
+                canvas.drawColor(Color.BLACK)
                 val r = 100
                 val x = engine.desiredWidth / 2
                 val y = engine.desiredHeight / 2
                 val yOff = (r * sin).toInt()
                 val xOff = (r * cos).toInt()
-                canvas!!.drawLine(
+                canvas.drawLine(
                     (x - xOff).toFloat(),
                     (y - yOff).toFloat(),
                     (x + xOff).toFloat(),

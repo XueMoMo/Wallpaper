@@ -7,11 +7,10 @@ import android.view.animation.LinearInterpolator
 import com.eericxu.wallpaper.service.WallpaperServer.MEngine
 
 open class TimeAnimatorBaseWallpaper : Wallpaper {
-    private lateinit var engine: MEngine
+
     private lateinit var anim: TimeAnimator
     var isVisible: Boolean = false
     override fun onCreate(engine: MEngine) {
-        this.engine = engine
         anim = TimeAnimator()
         anim.interpolator = LinearInterpolator()
         anim.repeatCount = ValueAnimator.INFINITE
@@ -19,8 +18,10 @@ open class TimeAnimatorBaseWallpaper : Wallpaper {
         anim.setTimeListener { _: TimeAnimator?, total: Long, delta: Long ->
             if (isVisible) {
                 val canvas = engine.surfaceHolder.lockCanvas()
-                onFrame(canvas, total, delta)
-                engine.surfaceHolder.unlockCanvasAndPost(canvas)
+                if (canvas != null) {
+                    onFrame(canvas)
+                    engine.surfaceHolder.unlockCanvasAndPost(canvas)
+                }
             }
         }
         anim.start()
@@ -39,6 +40,6 @@ open class TimeAnimatorBaseWallpaper : Wallpaper {
         }
     }
 
-    open fun onFrame(canvas: Canvas, total: Long, delta: Long) {
+    open fun onFrame(canvas: Canvas) {
     }
 }

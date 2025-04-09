@@ -1,57 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <style>
-        html,
-        body {
-          padding: 0;
-          margin: 0;
-          font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-            Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-          line-height: 1.6;
-          font-size: 16px;
-          background-color: #fff;
-          color: white;
-          width: 100%;
-          height: 100%;
-        }
-
-        body {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-        html{
-          filter: invert(100);
-        }
-        /* HTML: <div class="loader"></div> */
-        .loader {
-          width: fit-content;
-          padding-bottom: 5px;
-          font-weight: bold;
-          font-family: monospace;
-          font-size: 8vw;
-          overflow: hidden;
-          color: #0000;
-          text-shadow: 0 0 0 #000, 10ch 0 0 #000;
-          background: linear-gradient(#000 0 0) bottom left/0% 3px no-repeat;
-          animation: l14 1.5s infinite;
-        }
-        .loader:before {
-          content: "Loading...";
-        }
-        @keyframes l14 {
-          80% {
-            text-shadow: 0 0 0 #000, 10ch 0 0 #000;
-            background-size: 100% 3px;
-          }
-          100% {
-            text-shadow: -10ch 0 0 #000, 0 0 0 #000;
-          }
-        }
-    </style>
+    <link rel="stylesheet" href="./global.css"/>
 </head>
 <body>
-<div class="loader"></div>
+
 </body>
 </html>
